@@ -33,9 +33,9 @@ class Clean_Tweets:
         """
         convert column to datetime
         """
-        ----
         
-        ----
+        df['created_at'] = pd.to_datetime(df['created_at'], format='%Y%m%d')
+
         
         df = df[df['created_at'] >= '2020-12-31' ]
         
@@ -46,10 +46,13 @@ class Clean_Tweets:
         convert columns like polarity, subjectivity, retweet_count
         favorite_count etc to numbers
         """
-        df['polarity'] = pd.----
+        for name in list(df.select_dtypes(include=['int16', 'int32', 'int64', 'float16', 'float32', 'float64']).columns.values):
+            df[name] = pd.to_numeric(df[name], errors="coerce")
+            
+        # df['subjectivity'] = pd.to_numeric(df['subjectivity'], errors="coerce")
+        # df['retweet_count'] = pd.to_numeric(df['retweet_count'], errors="coerce")
+        # df['favorite_count'] = pd.to_numeric(df['favorite_count'], errors="coerce")
         
-        ----
-        ----
         
         return df
     
@@ -58,6 +61,6 @@ class Clean_Tweets:
         remove non english tweets from lang
         """
         
-        df = ----
+        df = df[df["original_text"].isascii()]
         
         return df
