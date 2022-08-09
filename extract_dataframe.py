@@ -36,10 +36,22 @@ class TweetDfExtractor:
 
     # an example function
     def find_statuses_count(self)->list:
-        statuses_count 
+        try:
+            statuses_count = [x['statuses_count'] for x in self.tweets_list]
+        except KeyError:
+            statuses_count = None
+
+        return statuses_count
+    
+         
         
     def find_full_text(self)->list:
-        text = 
+        try:
+            text = [x['full_text'] for x in self.tweets_list]
+        except KeyError:
+            text = None
+
+        return text
        
     
     def find_sentiments(self, text)->list:
@@ -47,22 +59,44 @@ class TweetDfExtractor:
         return polarity, self.subjectivity
 
     def find_created_time(self)->list:
-       
+        try:
+            created_at = [x['created_at'] for x in self.tweets_list]
+        except KeyError:
+            created_at = None
+
         return created_at
 
     def find_source(self)->list:
-        source = 
+        try:
+            source = [x['source'] for x in self.tweets_list]
+        except KeyError:
+            source = None
 
         return source
 
     def find_screen_name(self)->list:
-        screen_name = 
+        try:
+            screen_name = [x['screen_name'] for x in self.tweets_list]
+        except KeyError:
+            screen_name = None
+
+        return screen_name
 
     def find_followers_count(self)->list:
-        followers_count = 
+        try:
+            followers_count = [x['followers_count'] for x in self.tweets_list]
+        except KeyError:
+            followers_count = None
+
+        return followers_count
 
     def find_friends_count(self)->list:
-        friends_count = 
+        try:
+            friends_count = [x['friends_count'] for x in self.tweets_list]
+        except KeyError:
+            friends_count = None
+
+        return friends_count
 
     def is_sensitive(self)->list:
         try:
@@ -73,16 +107,37 @@ class TweetDfExtractor:
         return is_sensitive
 
     def find_favourite_count(self)->list:
+        try:
+            favourites_count = [x['favourites_count'] for x in self.tweets_list]
+        except KeyError:
+            favourites_count = None
+
+        return favourites_count
         
     
     def find_retweet_count(self)->list:
-        retweet_count = 
+        try:
+            retweet_count = [x['retweet_count'] for x in self.tweets_list]
+        except KeyError:
+            retweet_count = None
+
+        return retweet_count
 
     def find_hashtags(self)->list:
-        hashtags =
+        try:
+            hashtags = [x['hashtags'] for x in self.tweets_list]
+        except KeyError:
+            hashtags = None
+
+        return hashtags
 
     def find_mentions(self)->list:
-        mentions = 
+        try:
+            mentions = [x['user_mentions'] for x in self.tweets_list]
+        except KeyError:
+            mentions = None
+
+        return mentions
 
 
     def find_location(self)->list:
