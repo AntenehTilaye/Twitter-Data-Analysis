@@ -2,6 +2,8 @@ import json
 import pandas as pd
 from textblob import TextBlob
 
+import re
+
 from clean_tweets_dataframe import Clean_Tweets
 
 
@@ -179,6 +181,14 @@ class TweetDfExtractor:
             listed_count = None
         
         return listed_count
+    
+    def find_clean_text(self)->list:
+        try:
+            listed_count = [re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", x['full_text']) for x in self.tweets_list]
+        except TypeError:
+            listed_count = None
+        
+        return listed_count
 
     
     def get_tweet_df(self, save=False)->pd.DataFrame:
@@ -227,7 +237,7 @@ if __name__ == "__main__":
     sentiment = zip(tweet_df["polarity"], tweet_df["subjectivity"])
     place_cord = tweet.find_place_coord()
     screen_count = tweet.find_listed_count()
-    clean_text = tweet.find_full_text()
+    clean_text = tweet.find_clean_text()
     
     data = zip(tweet_df["created_at"], tweet_df["source"], tweet_df["original_text"], clean_text, sentiment, tweet_df["polarity"], 
                tweet_df["subjectivity"], tweet_df["lang"], tweet_df["favorite_count"], tweet_df["retweet_count"], 
