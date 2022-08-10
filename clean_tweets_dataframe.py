@@ -24,7 +24,7 @@ class Clean_Tweets:
         drop duplicate rows
         """
         
-        self.df.drop_duplicates(subset=["id"], keep="first")
+        self.df.drop_duplicates(subset=["original_text"], keep="first")
         
         return self.df
     
@@ -33,7 +33,7 @@ class Clean_Tweets:
         convert column to datetime
         """
         
-        self.df['created_at'] = pd.to_datetime(self.df['created_at'], format='%Y%m%d')
+        self.df['created_at'] = pd.to_datetime(self.df['created_at'], format='%a %b %d %H:%M:%S %z %Y')
 
         
         self.df = self.df[self.df['created_at'] >= '2020-12-31' ]
@@ -61,7 +61,9 @@ class Clean_Tweets:
         remove non english tweets from lang
         """
         
-        self.df = self.df[self.df["original_text"].isascii()]
+        self.df = self.df[self.df['original_text'].map(lambda x: x.isascii())]
+        
+
         
         
     
