@@ -39,7 +39,7 @@ class TweetDfExtractor:
     # an example function
     def find_statuses_count(self)->list:
         try:
-            statuses_count = [x['statuses_count'] for x in self.tweets_list]
+            statuses_count = [x["user"]['statuses_count'] for x in self.tweets_list]
         except KeyError:
             statuses_count = None
 
@@ -163,10 +163,24 @@ class TweetDfExtractor:
             langs = None
         
         return langs
+    
+    def find_place_coord(self)->list:
+        try:
+            place_coord = [x["place"]['bounding_box']["coordinates"] if "bounding_box" in x else None for x in self.tweets_list ]
+        except TypeError:
+            place_coord = None
+        
+        return place_coord
+    
+    def find_listed_count(self)->list:
+        try:
+            listed_count = [x['user']['listed_count'] for x in self.tweets_list]
+        except TypeError:
+            listed_count = None
+        
+        return listed_count
 
     
-        
-        
     def get_tweet_df(self, save=False)->pd.DataFrame:
         """required column to be generated you should be creative and add more features"""
         
@@ -209,5 +223,20 @@ if __name__ == "__main__":
     tweet_df = tweet.get_tweet_df(True) 
 
     # use all defined functions to generate a dataframe with the specified columns above
+    
+    sentiment = zip(tweet_df["polarity"], tweet_df["subjectivity"])
+    place_cord = tweet.find_place_coord()
+    screen_count = tweet.find_listed_count()
+    clean_text = tweet.find_full_text()
+    
+    data = zip(tweet_df["created_at"], tweet_df["source"], tweet_df["original_text"], clean_text, sentiment, tweet_df["polarity"], 
+               tweet_df["subjectivity"], tweet_df["lang"], tweet_df["favorite_count"], tweet_df["retweet_count"], 
+               tweet_df["original_author"], screen_count, tweet_df["followers_count"], tweet_df["friends_count"], 
+               tweet_df["possibly_sensitive"], tweet_df["hashtags"], tweet_df["user_mentions"], tweet_df["place"], place_cord)
+    
+    full_df = pd.DataFrame(data=data, columns=columns)
+    
     cleaner = Clean_Tweets(tweet_df)
     clean_df = cleaner.get_clean_tweets()
+    full_df.to_csv('cleaned_tweet_data.csv', index=False)
+    
