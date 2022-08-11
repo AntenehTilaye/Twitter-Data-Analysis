@@ -168,7 +168,7 @@ class TweetDfExtractor:
     
     def find_place_coord(self)->list:
         try:
-            place_coord = [x["place"]['bounding_box']["coordinates"] if "bounding_box" in x else None for x in self.tweets_list ]
+            place_coord = [x["coordinates"] for x in self.tweets_list]
         except TypeError:
             place_coord = None
         
@@ -239,6 +239,7 @@ if __name__ == "__main__":
     screen_count = tweet.find_listed_count()
     clean_text = tweet.find_clean_text()
     
+    # print(place_cord)
     data = zip(tweet_df["created_at"], tweet_df["source"], tweet_df["original_text"], clean_text, sentiment, tweet_df["polarity"], 
                tweet_df["subjectivity"], tweet_df["lang"], tweet_df["favorite_count"], tweet_df["retweet_count"], 
                tweet_df["original_author"], screen_count, tweet_df["followers_count"], tweet_df["friends_count"], 
@@ -246,7 +247,8 @@ if __name__ == "__main__":
     
     full_df = pd.DataFrame(data=data, columns=columns)
     
-    cleaner = Clean_Tweets(tweet_df)
+    cleaner = Clean_Tweets(full_df)
     clean_df = cleaner.get_clean_tweets()
-    full_df.to_csv('cleaned_tweet_data.csv', index=False)
+    
+    clean_df.to_csv('cleaned_tweet_data.csv', index=False)
     

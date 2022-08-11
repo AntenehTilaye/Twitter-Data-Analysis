@@ -17,7 +17,7 @@ class Clean_Tweets:
         """
         unwanted_rows = self.df[self.df['retweet_count'] == 'retweet_count' ].index
         self.df.drop(unwanted_rows , inplace=True)
-        # self.df = self.df[self.df['polarity'] != 'polarity']
+        
         
     def drop_duplicate(self):
         """
@@ -67,9 +67,11 @@ class Clean_Tweets:
         
         
     
-    def get_clean_tweets(self):
-            self.drop_unwanted_column()
-            self.drop_duplicate()
-            self.convert_to_datetime()
-            self.convert_to_numbers()
-            self.remove_non_english_tweets()
+    def get_clean_tweets(self)->pd.DataFrame:
+        self.drop_unwanted_column()
+        self.drop_duplicate()
+        self.convert_to_datetime()
+        self.convert_to_numbers()
+        self.remove_non_english_tweets()
+            
+        return self.df
