@@ -5,6 +5,7 @@ from textblob import TextBlob
 import re
 
 from clean_tweets_dataframe import Clean_Tweets
+from preprocess_tweet_dataframe import Preprocess_Tweet
 
 
 def read_json(json_file: str)->list:
@@ -184,11 +185,11 @@ class TweetDfExtractor:
     
     def find_clean_text(self)->list:
         try:
-            listed_count = [re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", x['full_text']) for x in self.tweets_list]
+            text = [re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", x['full_text']) for x in self.tweets_list]
         except TypeError:
-            listed_count = None
+            text = None
         
-        return listed_count
+        return text
 
     
     def get_tweet_df(self, save=False)->pd.DataFrame:
@@ -217,9 +218,8 @@ class TweetDfExtractor:
         df = pd.DataFrame(data=data, columns=columns)
 
         if save:
-            df.to_csv('processed_tweet_data.csv', index=False)
+            df.to_csv('processed_data/processed_tweet_data.csv', index=False)
             print('File Successfully Saved.!!!')
-        
         
         return df
 
@@ -248,7 +248,10 @@ if __name__ == "__main__":
     full_df = pd.DataFrame(data=data, columns=columns)
     
     cleaner = Clean_Tweets(full_df)
-    clean_df = cleaner.get_clean_tweets()
+    clean_df = cleaner.clean_tweets()
     
-    clean_df.to_csv('cleaned_tweet_data.csv', index=False)
+    preprocesser = Preprocess_Tweet(clean_df)
+    clean_df = preprocesser.preprocess_cleaned_text()
+    
+    clean_df.to_csv('processed_data/cleaned_tweet_data.csv', index=False)
     
