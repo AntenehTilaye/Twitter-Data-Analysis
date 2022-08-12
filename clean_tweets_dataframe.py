@@ -10,7 +10,7 @@ class Clean_Tweets:
         self.df = df
         print('Automation in Action...!!!')
         
-    def drop_unwanted_column(self):
+    def drop_unwanted_column(self)->pd.DataFrame:
         """
         remove rows that has column names. This error originated from
         the data collection stage.  
@@ -18,8 +18,10 @@ class Clean_Tweets:
         unwanted_rows = self.df[self.df['retweet_count'] == 'retweet_count' ].index
         self.df.drop(unwanted_rows , inplace=True)
         
+        return self.df
         
-    def drop_duplicate(self):
+        
+    def drop_duplicate(self)->pd.DataFrame:
         """
         drop duplicate rows
         """
@@ -28,7 +30,7 @@ class Clean_Tweets:
         
         return self.df
     
-    def convert_to_datetime(self):
+    def convert_to_datetime(self)->pd.DataFrame:
         """
         convert column to datetime
         """
@@ -40,7 +42,7 @@ class Clean_Tweets:
         
         return self.df
     
-    def convert_to_numbers(self):
+    def convert_to_numbers(self)->pd.DataFrame:
         """
         convert columns like polarity, subjectivity, retweet_count
         favorite_count etc to numbers
@@ -52,22 +54,24 @@ class Clean_Tweets:
         # self.df['subjectivity'] = pd.to_numeric(self.df['subjectivity'], errors="coerce")
         # self.df['retweet_count'] = pd.to_numeric(self.df['retweet_count'], errors="coerce")
         # self.df['favorite_count'] = pd.to_numeric(self.df['favorite_count'], errors="coerce")
-        
+                
+        return self.df
         
         
 
-    def remove_non_english_tweets(self):
+    def remove_non_english_tweets(self)->pd.DataFrame:
         """
         remove non english tweets from lang
         """
         
         self.df = self.df[self.df['original_text'].map(lambda x: x.isascii())]
         
-
+        
+        return self.df
         
         
     
-    def get_clean_tweets(self)->pd.DataFrame:
+    def clean_tweets(self)->pd.DataFrame:
         self.drop_unwanted_column()
         self.drop_duplicate()
         self.convert_to_datetime()

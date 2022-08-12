@@ -5,6 +5,7 @@ from textblob import TextBlob
 import re
 
 from clean_tweets_dataframe import Clean_Tweets
+from preprocess_tweet_dataframe import Preprocess_Tweet
 
 
 def read_json(json_file: str)->list:
@@ -65,6 +66,7 @@ class TweetDfExtractor:
         subjectivity = [TextBlob(x).subjectivity for x in text]
         
         return polarity, subjectivity
+    
 
     def find_created_time(self)->list:
         try:
@@ -73,6 +75,7 @@ class TweetDfExtractor:
             created_at = None
 
         return created_at
+    
 
     def find_source(self)->list:
         try:
@@ -81,6 +84,7 @@ class TweetDfExtractor:
             source = None
 
         return source
+    
 
     def find_screen_name(self)->list:
         try:
@@ -89,6 +93,7 @@ class TweetDfExtractor:
             screen_name = None
 
         return screen_name
+    
 
     def find_followers_count(self)->list:
         try:
@@ -97,6 +102,7 @@ class TweetDfExtractor:
             followers_count = None
 
         return followers_count
+    
 
     def find_friends_count(self)->list:
         try:
@@ -105,6 +111,7 @@ class TweetDfExtractor:
             friends_count = None
 
         return friends_count
+    
 
     def is_sensitive(self)->list:
         try:
@@ -113,6 +120,7 @@ class TweetDfExtractor:
             is_sensitive = None
 
         return is_sensitive
+    
 
     def find_favourite_count(self)->list:
         try:
@@ -184,11 +192,11 @@ class TweetDfExtractor:
     
     def find_clean_text(self)->list:
         try:
-            listed_count = [re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", x['full_text']) for x in self.tweets_list]
+            text = [re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", x['full_text']) for x in self.tweets_list]
         except TypeError:
-            listed_count = None
+            text = None
         
-        return listed_count
+        return text
 
     
     def get_tweet_df(self, save=False)->pd.DataFrame:
@@ -217,17 +225,19 @@ class TweetDfExtractor:
         df = pd.DataFrame(data=data, columns=columns)
 
         if save:
-            df.to_csv('processed_tweet_data.csv', index=False)
+            df.to_csv('processed_data/processed_tweet_data.csv', index=False)
             print('File Successfully Saved.!!!')
-        
         
         return df
 
                 
 if __name__ == "__main__":
     # required column to be generated you should be creative and add more features
-    columns = ['created_at', 'source', 'original_text','clean_text', 'sentiment','polarity','subjectivity', 'lang', 'favorite_count', 'retweet_count', 
-    'original_author', 'screen_count', 'followers_count','friends_count','possibly_sensitive', 'hashtags', 'user_mentions', 'place', 'place_coord_boundaries']
+    columns = ['created_at', 'source', 'original_text','clean_text', 'sentiment','polarity','subjectivity',
+               'lang', 'favorite_count', 'retweet_count', 'original_author', 'screen_count', 'followers_count',
+               'friends_count','possibly_sensitive', 'hashtags', 'user_mentions', 'place',
+               'place_coord_boundaries']
+    
     _, tweet_list = read_json("data/africa_twitter_data.json")
     tweet = TweetDfExtractor(tweet_list)
     tweet_df = tweet.get_tweet_df(True) 
@@ -248,7 +258,10 @@ if __name__ == "__main__":
     full_df = pd.DataFrame(data=data, columns=columns)
     
     cleaner = Clean_Tweets(full_df)
-    clean_df = cleaner.get_clean_tweets()
+    clean_df = cleaner.clean_tweets()
     
-    clean_df.to_csv('cleaned_tweet_data.csv', index=False)
+    preprocesser = Preprocess_Tweet(clean_df)
+    clean_df = preprocesser.preprocess_cleaned_text()
+    
+    clean_df.to_csv('processed_data/cleaned_tweet_data.csv', index=False)
     
